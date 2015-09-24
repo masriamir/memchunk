@@ -2,3 +2,4 @@ src/*.o
 dist
 *.sh
 .*
+*.orig
