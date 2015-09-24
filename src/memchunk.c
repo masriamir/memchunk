@@ -135,6 +135,17 @@ bool read(void *const buf, MemChunk *const mc, const uint32_t size) {
     return true;
 }
 
+bool read_ofs(void *const buf, MemChunk *const mc, const uint32_t size, const uint32_t offset) {
+    /* make sure we are not reading past end of chunk */
+    if (offset + size > mc->size) {
+        return false;
+    }
+
+    /* seek to offset from beginning of chunk and then read as normal */
+    seek_memchunk(mc, offset, SEEK_SET);
+    return read(buf, mc, size);
+}
+
 bool write(MemChunk *mc, const void *data, const uint32_t size) {
     /* valid data to write */
     if (!data) {
@@ -151,4 +162,10 @@ bool write(MemChunk *mc, const void *data, const uint32_t size) {
     mc->ptr += size;
 
     return true;
+}
+
+bool write_ofs(MemChunk *mc, const void *data, const uint32_t size, const uint32_t offset) {
+    /* seek to offset from beginning of chunk and then write as normal */
+    seek_memchunk(mc, offset, SEEK_SET);
+    return write(mc, data, size);
 }
